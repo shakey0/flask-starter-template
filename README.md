@@ -14,17 +14,16 @@ This README provides instructions on how to use the `flask-template.py` script t
 
 1. **Download the Script**
 
-Download the `flask-template.py` script to your local machine.
+    Download the `flask-template.py` script to your local machine.
 
 2. **Run the Script**
 
-Open your command line tool and navigate to the directory where you want your new Flask project to be created.
+    Open your command line tool and navigate to the directory where you want your new Flask project to be created.
 
-Run the script using Python:
+    Run the script using Python:
 
-```bash
-python path/to/flask-template.py
-```
+    ```bash
+    python path/to/flask-template.py
 
 #### Project Structure
 
@@ -38,50 +37,46 @@ The script will create a new directory with your project name and set up a basic
 
 1. **Create a Virtual Environment (Recommended)**
 
-Navigate to your project directory and create a virtual environment:
+    Navigate to your project directory and create a virtual environment:
 
-```bash
-pipenv install
-pipenv shell
-```
+    ```bash
+    pipenv install
+    pipenv shell
 
-Do Cmd+Shift+P and click 'Python: Select Interpreter'. Select the interpreter for your project.
+    Do Cmd+Shift+P and click 'Python: Select Interpreter'. Select the interpreter for your project.
 
 ### Database Setup
 
 1. **Configure Database URIs**
 
-Update the .env file in your project root with the correct URIs for your development and test databases if necessary. (You shouldn't need to do this.)
+    Update the .env file in your project root with the correct URIs for your development and test databases if necessary. (You shouldn't need to do this.)
 
 2. **Initialize and Migrate Database**
 
-Run the following commands to set up your database:
+    Run the following commands to set up your database:
 
-```bash
-flask db init
-createdb THE_EXACT_DATABASE_NAME_YOU_CHOSE_EARLIER
-createdb THE_EXACT_DATABASE_NAME_YOU_CHOSE_EARLIER_test
-createdb THE_EXACT_DATABASE_NAME_YOU_CHOSE_EARLIER_prod
-flask db migrate -m "Initial migration"
-flask db upgrade
-```
+    ```bash
+    flask db init
+    createdb THE_EXACT_DATABASE_NAME_YOU_CHOSE_EARLIER
+    createdb THE_EXACT_DATABASE_NAME_YOU_CHOSE_EARLIER_test
+    createdb THE_EXACT_DATABASE_NAME_YOU_CHOSE_EARLIER_prod
+    flask db migrate -m "Initial migration"
+    flask db upgrade
 
 ### Running the Application
 
 1. **Start the Flask Server**
 
-To run the Flask application:
+    To run the Flask application:
 
-```bash
-flask run
-```
+    ```bash
+    flask run
 
 ### Running Tests
 
 1. **Running Pytest**
 
-To run the tests, simply use the pytest command in the project root:
+    To run the tests, simply use the pytest command in the project root:
 
-```bash
-pipenv run pytest
-```
+    ```bash
+    pipenv run pytest
