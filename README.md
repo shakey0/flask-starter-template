@@ -42,7 +42,7 @@ The script will create a new directory with your project name and set up a basic
     ```bash
     pipenv install
     pipenv shell
-
+    ```
     Do Cmd+Shift+P and click 'Python: Select Interpreter'. Select the interpreter for your project.
 
 ### Database Setup
