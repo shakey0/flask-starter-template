@@ -58,6 +58,7 @@ The script will create a new directory with your project name and set up a basic
 2. **Initialize and Migrate Database**
 
     Run the following commands to set up your database:
+    (If you need a reminder of your database name, you'll find it in the .env file.)
 
     ```bash
     flask db init

@@ -1,26 +1,26 @@
 import os
 
-def is_valid_name(name, illegal_chars):
+def is_valid_name(name, illegal_chars, uppercase=True):
     for char in name:
-        if char in illegal_chars:
+        if char in illegal_chars or (not uppercase and char.isupper()):
             print(f"Illegal character '{char}' in name!")
             return False
     return True
 
 illegal_chars = ["\\", "/", ":", "*", "?", "\"", "<", ">", "|", "'", "\x00", ".", ",", " "]
 
-def get_valid_name(prompt, illegal_chars):
+def get_valid_name(prompt, illegal_chars, uppercase=True):
     while True:
         name = input(prompt)
         if not name:
             print("Name cannot be empty.")
             continue
-        if is_valid_name(name, illegal_chars):
+        if is_valid_name(name, illegal_chars, uppercase):
             return name
 
 project_name = get_valid_name("Enter your project name: ", illegal_chars)
 app_name = get_valid_name("Enter the name of your Flask app: ", illegal_chars)
-database_name = get_valid_name("Enter the name of your database: ", illegal_chars)
+database_name = get_valid_name("Enter the name of your database: ", illegal_chars, uppercase=False)
 
 base_path = os.path.join(os.getcwd(), project_name)
 
@@ -119,8 +119,9 @@ from flask import Flask
 from {app_name} import db
 from {app_name}.config import TestingConfig
 from {app_name}.models.test_table import RunTable
+from tests.seed_data import init_user
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope='function')
 def test_app():
     app = Flask(__name__)
     app.config.from_object(TestingConfig)
@@ -131,21 +132,26 @@ def test_app():
         db.session.remove()
         db.drop_all()
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope='function')
 def test_client(test_app):
     with test_app.test_client() as client:
         yield client
 
 @pytest.fixture(scope='function')
-def seed_database(test_app):
+def seed_test_database_for_test(test_app):
     with test_app.app_context():
         db.session.add(RunTable(name='first_record'))
         db.session.commit()
+
+@pytest.fixture(scope='function')
+def seed_test_database(test_app):
+    with test_app.app_context():
+        init_user(db)
 '''
 
 test_database_content = f'''from {app_name}.models.test_table import RunTable, db
 
-def test_database_connection(test_app, test_client, seed_database):
+def test_database_connection(test_app, test_client, seed_test_database_for_test):
     db.session.add(RunTable(name='second_record'))
     db.session.commit()
 
@@ -162,6 +168,27 @@ class RunTable(db.Model):
     __tablename__ = 'test_table'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
+'''
+
+seed_data_content = f'''from {app_name}.models.user import User
+
+def init_user(db):
+
+    test_user = User(
+        username='john_doe',
+        email='john@example.com'
+    )
+    db.session.add(test_user)
+    db.session.commit()
+'''
+
+test_user_content = f'''from {app_name}.models.user import User
+
+def test_user_creation(test_app, test_client, seed_test_database):
+    user = User.query.filter_by(username='john_doe').first()
+    assert user is not None
+    assert user.username == 'john_doe'
+    assert user.email == 'john@example.com'
 '''
 
 main_content = f'''from flask import Blueprint
@@ -214,6 +241,8 @@ files = {
     os.path.join(base_path, "tests", "__init__.py"): "# Initialize tests module",
     os.path.join(base_path, "tests", "conftest.py"): f"{conftest_content}",
     os.path.join(base_path, "tests", "test_database.py"): f"{test_database_content}",
+    os.path.join(base_path, "tests", "seed_data.py"): f"{seed_data_content}",
+    os.path.join(base_path, "tests", "test_user.py"): f"{test_user_content}",
     os.path.join(base_path, "requirements.txt"): "python-dotenv\npsycopg2-binary\nsqlalchemy\nflask\nFlask-Migrate\nflask_sqlalchemy\nflask-wtf\nflask-login\nflask-migrate\nflask-bcrypt\nflask-cors\nflask-restful\nflask-jwt-extended\nflask-mail\npytest\n",
     os.path.join(base_path, ".env"): f"{env_content}",
     os.path.join(base_path, ".gitignore"): "venv/\n*.pyc\n.env\n",
