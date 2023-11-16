@@ -25,7 +25,8 @@ This README provides instructions on how to use the `flask-template.py` script t
     ```bash
     python path/to/flask-template.py
     ```
-    Enter the names of your project, app and database.
+    (If for example you git cloned this repo into Documents, the path to run the file from any other directory would be:  python ~/Documents/FlaskProjectTemplate/flask-template.py)
+    Upon running the file, enter the names of your project, app and database.
 
 #### Project Structure
 
