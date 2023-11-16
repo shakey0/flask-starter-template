@@ -26,7 +26,7 @@ This README provides instructions on how to use the `flask-template.py` script t
     python path/to/flask-template.py
     ```
     (If for example you git cloned this repo into Documents, the path to run the file from any other directory would be:  python ~/Documents/FlaskProjectTemplate/flask-template.py)
-    Upon running the file, enter the names of your project, app and database.
+    <br><br>Upon running the file, enter the names of your project, app and database.
 
 #### Project Structure
 
@@ -41,7 +41,7 @@ The script will create a new directory with your project name and set up a basic
 1. **Create a Virtual Environment (Recommended)**
 
     Open the project folder in Visual Studio Code. (You may need to open it, close it, and open it again.)
-    Open a new terminal and create a virtual environment:
+    <br><br>Open a new terminal and create a virtual environment:
 
     ```bash
     pipenv install
