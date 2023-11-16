@@ -54,26 +54,29 @@ directories = [
 
 database_uri = f"postgresql://localhost/{database_name}"
 
-app_init_content = '''from flask import Flask
-from flask_migrate import Migrate
-from flask_sqlalchemy import SQLAlchemy
-from .views.main import main as main_blueprint
-# from .views.auth import auth as auth_blueprint
-# from .views.api import api as api_blueprint
+app_init_content = f'''from flask import Flask
+from {app_name}.extensions import db, migrate
 from .config import load_config
 import os
 
-app = Flask(__name__)
+def create_app():
+    app = Flask(__name__)
 
-env = os.getenv('FLASK_ENV', 'development')
-app.config.from_object(load_config(env))
+    env = os.getenv('FLASK_ENV', 'development')
+    app.config.from_object(load_config(env))
 
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+    db.init_app(app)
+    migrate.init_app(app, db)
 
-app.register_blueprint(main_blueprint)
-# app.register_blueprint(auth_blueprint)
-# app.register_blueprint(api_blueprint)
+    from .views.main import main as main_blueprint
+    # from .views.auth import auth as auth_blueprint
+    # from .views.api import api as api_blueprint
+
+    app.register_blueprint(main_blueprint)
+    # app.register_blueprint(auth_blueprint)
+    # app.register_blueprint(api_blueprint)
+
+    return app
 '''
 
 config_content = f'''import os
@@ -161,6 +164,44 @@ class RunTable(db.Model):
     name = db.Column(db.String(50))
 '''
 
+main_content = f'''from flask import Blueprint
+from {app_name}.extensions import db
+from {app_name}.models.user import User
+from flask import render_template
+import random
+import string
+
+main = Blueprint('main', __name__)
+''' + '''
+@main.route('/')
+def index():
+    # { }
+    random_username = ''.join(random.choices(string.ascii_lowercase, k=10))
+    random_email = '{}@example.com'.format(random_username)
+
+    new_user = User(username=random_username, email=random_email)
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    last_user = User.query.order_by(User.id.desc()).first()
+
+    return '<h1>Hello world!</h1><br>Last added user: {} with email {}'.format(last_user.username, last_user.email)
+'''
+
+user_model_content = f'''from {app_name} import db
+
+class User(db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), index=True, unique=True)
+    email = db.Column(db.String(120), index=True, unique=True)
+''' + '''
+    # { }
+    def __repr__(self):
+        return '<User {}>'.format(self.username)
+'''
+
 # Files with their default contents
 files = {
     # Basic app setup
@@ -168,7 +209,8 @@ files = {
     os.path.join(base_path, f"{app_name}", "config.py"): f"{config_content}",
     os.path.join(base_path, f"{app_name}", "utils.py"): "# Utility functions\n",
     os.path.join(base_path, f"{app_name}/static", "script.js"): "// JavaScript file",
-    os.path.join(base_path, "run.py"): f"from dotenv import load_dotenv\nload_dotenv()\n\nfrom {app_name} import app\n\nif __name__ == '__main__':\n    app.run(debug=True)\n",
+    os.path.join(base_path, f"{app_name}/extensions.py"): "from flask_sqlalchemy import SQLAlchemy\nfrom flask_migrate import Migrate\n\n# Initialize extensions\n\ndb = SQLAlchemy()\nmigrate = Migrate()\n",
+    os.path.join(base_path, "run.py"): f"from dotenv import load_dotenv\nload_dotenv()\n\nfrom {app_name} import create_app\n\napp = create_app()\n\nif __name__ == '__main__':\n    app.run(debug=True)\n",
     os.path.join(base_path, "tests", "__init__.py"): "# Initialize tests module",
     os.path.join(base_path, "tests", "conftest.py"): f"{conftest_content}",
     os.path.join(base_path, "tests", "test_database.py"): f"{test_database_content}",
@@ -185,12 +227,12 @@ files = {
     # Models
     os.path.join(base_path, f"{app_name}/models", "__init__.py"): "# Initialize models module",
     os.path.join(base_path, f"{app_name}/models", "test_table.py"): f"{test_table_content}",
-    os.path.join(base_path, f"{app_name}/models", "user.py"): f"from {app_name} import db\n\nclass User(db.Model):\n    # User model",
-    os.path.join(base_path, f"{app_name}/models", "post.py"): f"from {app_name} import db\n\nclass Post(db.Model):\n    # Post model",
+    os.path.join(base_path, f"{app_name}/models", "user.py"): f"{user_model_content}",
+    os.path.join(base_path, f"{app_name}/models", "post.py"): f"from {app_name} import db\n\nclass Post(db.Model):\n    pass",
 
     # Views
     os.path.join(base_path, f"{app_name}/views", "__init__.py"): "# Initialize views module",
-    os.path.join(base_path, f"{app_name}/views", "main.py"): "from flask import Blueprint\n\nmain = Blueprint('main', __name__)\n\n@main.route('/')\ndef index():\n    return 'Hello, World!'\n",
+    os.path.join(base_path, f"{app_name}/views", "main.py"): f"{main_content}",
     os.path.join(base_path, f"{app_name}/views", "auth.py"): "# Authentication views",
     os.path.join(base_path, f"{app_name}/views", "api.py"): "# API views",
 
