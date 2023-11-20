@@ -114,12 +114,14 @@ SQLALCHEMY_TEST_DATABASE_URI={database_uri}_test
 SQLALCHEMY_DATABASE_URI_PROD={database_uri}_prod
 '''
 
-conftest_content = f'''import pytest
+conftest_content = f'''import pytest, sys, py, os
 from flask import Flask
 from {app_name} import db
 from {app_name}.config import TestingConfig
 from {app_name}.models.test_table import RunTable
 from tests.seed_data import init_user
+from playwright.sync_api import sync_playwright
+from xprocess import ProcessStarter
 
 @pytest.fixture(scope='function')
 def test_app():
@@ -147,6 +149,29 @@ def seed_test_database_for_test(test_app):
 def seed_test_database(test_app):
     with test_app.app_context():
         init_user(db)
+
+@pytest.fixture
+def page():
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page()
+        yield page
+        browser.close()
+''' + '''
+@pytest.fixture(scope='session')
+def flask_server(xprocess):
+    python_executable = sys.executable
+    app_file = py.path.local(__file__).dirpath("../run.py").realpath()
+    class Starter(ProcessStarter):
+        pattern = "Running on http://127.0.0.1:5000"
+        env = {"PORT": str(5000), "APP_ENV": "testing", **os.environ}
+        args = [python_executable, app_file]
+
+    xprocess.ensure('flask_app', Starter)
+
+    yield f"http://localhost:5000/"
+
+    xprocess.getinfo('flask_app').terminate()
 '''
 
 test_database_content = f'''from {app_name}.models.test_table import RunTable, db
@@ -189,6 +214,15 @@ def test_user_creation(test_app, test_client, seed_test_database):
     assert user is not None
     assert user.username == 'john_doe'
     assert user.email == 'john@example.com'
+'''
+
+test_homepage_content = f'''from playwright.sync_api import expect
+
+def test_homepage_navbar(page, test_app, test_client, seed_test_database, flask_server):
+    test_url = "http://localhost:5000/"
+    page.goto(test_url)
+    logo = page.locator('h1')
+    expect(logo).to_have_text('Hello world!')
 '''
 
 main_content = f'''from flask import Blueprint
@@ -243,7 +277,8 @@ files = {
     os.path.join(base_path, "tests", "test_database.py"): f"{test_database_content}",
     os.path.join(base_path, "tests", "seed_data.py"): f"{seed_data_content}",
     os.path.join(base_path, "tests", "test_user.py"): f"{test_user_content}",
-    os.path.join(base_path, "requirements.txt"): "python-dotenv\npsycopg2-binary\nsqlalchemy\nflask\nFlask-Migrate\nflask_sqlalchemy\nflask-wtf\nflask-login\nflask-migrate\nflask-bcrypt\nflask-cors\nflask-restful\nflask-jwt-extended\nflask-mail\npytest\n",
+    os.path.join(base_path, "tests", "test_homepage.py"): f"{test_homepage_content}",
+    os.path.join(base_path, "requirements.txt"): "python-dotenv\npsycopg2-binary\nsqlalchemy\nflask\nFlask-Migrate\nflask_sqlalchemy\nflask-wtf\nflask-login\nflask-migrate\nflask-bcrypt\nflask-cors\nflask-restful\nflask-jwt-extended\nflask-mail\npytest\npytest-xprocess\nplaywright\n",
     os.path.join(base_path, ".env"): f"{env_content}",
     os.path.join(base_path, ".gitignore"): "venv/\n*.pyc\n.env\n",
 

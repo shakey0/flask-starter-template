@@ -75,7 +75,7 @@ The script will create a new directory with your project name and set up a basic
     To run the Flask application:
 
     ```bash
-    flask run
+    python run.py
 
 ### Running Tests
 
@@ -84,4 +84,4 @@ The script will create a new directory with your project name and set up a basic
     To run the tests, simply use the pytest command in the project root:
 
     ```bash
-    pipenv run pytest
+    pytest
