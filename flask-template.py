@@ -92,7 +92,7 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_TEST_DATABASE_URI', '{database_uri}_test')
-    WTF_CSRF_ENABLED = False
+    WTF_CSRF_ENABLED = True
 
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI', '{database_uri}_prod')
@@ -164,7 +164,7 @@ def flask_server(xprocess):
     app_file = py.path.local(__file__).dirpath("../run.py").realpath()
     class Starter(ProcessStarter):
         pattern = "Running on http://127.0.0.1:5000"
-        env = {"PORT": str(5000), "APP_ENV": "testing", **os.environ}
+        env = {"PORT": str(5000), "FLASK_ENV": "testing", **os.environ}
         args = [python_executable, app_file]
 
     xprocess.ensure('flask_app', Starter)
