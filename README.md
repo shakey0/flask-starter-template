@@ -12,13 +12,11 @@ This README provides instructions on how to use the `flask-template.py` script t
 
 ### Using the Flask Template Script
 
-<br>
 
 1. **Download the Script**
 
     Download the `flask-template.py` script to your local machine.
 
-<br>
 
 2. **Run the Script**
 
@@ -34,7 +32,6 @@ This README provides instructions on how to use the `flask-template.py` script t
     <br><br>Once your tests have completed you'll see the message 'Your project is ready!'
     <br><br>If you've set up VS Code correctly, you'll be able to jump into your project by doing:
 
-<br>
 
 3. **Run in VS Code**
 
