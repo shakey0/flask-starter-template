@@ -41,22 +41,22 @@ This README provides instructions on how to use the `flask-template.py` script t
     ```
     (You may need to open VS Code, close it, and open it again.)
 
-    <br>Once in your project in VS Code, open a terminal, and if the pipenv shell isn't already activated, do:
+    Once in your project in VS Code, open a terminal, and if the pipenv shell isn't already activated, do:
     ```bash
     pipenv shell
     ```
 
-    <br>Now you can run the tests by doing:
+    Now you can run the tests by doing:
     ```bash
     pytest
     ```
 
-    <br>You can start the server by doing:
+    You can start the server by doing:
     ```bash
     python run.py
     ```
 
-#### Project Structure
+### Project Structure
 
 The script will create a new directory with your project name and set up a basic Flask project structure inside it, including:
 
