@@ -1,4 +1,5 @@
 import os
+import subprocess
 
 def is_valid_name(name, illegal_chars, uppercase=True):
     for char in name:
@@ -313,4 +314,33 @@ for directory in directories:
 for file_path, content in files.items():
     create_file(file_path, content)
 
-print("\nFlask project scaffolding with additional files created successfully!")
+print("\nFlask project scaffolding with additional files created successfully.")
+
+def change_directory(path):
+    os.chdir(path)
+    print(f"Changed working directory to {path}")
+
+def run_shell_command(command):
+    try:
+        subprocess.run(command, shell=True, check=True)
+        print(f"Successfully executed: {command}")
+    except subprocess.CalledProcessError as e:
+        print(f"Error in executing command: {command}\n{e}")
+    
+change_directory(base_path)
+
+run_shell_command("pipenv install")
+run_shell_command("pipenv run flask db init")
+run_shell_command(f"createdb {database_name}")
+run_shell_command(f"createdb {database_name}_test")
+run_shell_command(f"createdb {database_name}_prod")
+run_shell_command("pipenv run flask db migrate")
+run_shell_command("pipenv run flask db upgrade")
+run_shell_command("pipenv run playwright install")
+run_shell_command("pipenv run pytest")
+
+print("\n\nYour project is ready!")
+print("\nRun the following commands to start the server:\n")
+print(f"~ cd {project_name}/")
+print("~ pipenv shell")
+print("~ python run.py\n")

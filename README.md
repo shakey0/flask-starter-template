@@ -25,8 +25,33 @@ This README provides instructions on how to use the `flask-template.py` script t
     ```bash
     python path/to/flask-template.py
     ```
-    (If for example you git cloned this repo into Documents, the path to run the file from any other directory would be:  python ~/Documents/FlaskProjectTemplate/flask-template.py)
+    (If for example you git cloned this repo into Documents, the path to run the file from any other directory would be: " python ~/Documents/FlaskProjectTemplate/flask-template.py ")
     <br><br>Upon running the file, enter the names of your project, app and database.
+    <br><br>Once your tests have completed you'll see the message 'Your project is ready!'
+    <br><br>If you've set up VS Code correctly, you'll be able to jump into your project by doing:
+
+3. **Run in VS Code**
+
+    ```bash
+    cd YOUR_PROJECT_NAME/
+    code .
+    ```
+    (You may need to open VS Code, close it, and open it again.)
+
+    <br><br>Once in your project in VS Code, open a terminal, and if the pipenv shell isn't already activated, do:
+    ```bash
+    pipenv shell
+    ```
+
+    <br><br>Now you can run the tests by doing:
+    ```bash
+    pytest
+    ```
+
+    <br><br>You can start the server by doing:
+    ```bash
+    python run.py
+    ```
 
 #### Project Structure
 
@@ -35,53 +60,4 @@ The script will create a new directory with your project name and set up a basic
 - Application directories (models, views, forms, tests, etc.)
 - Configuration files
 - A basic Flask application setup
-
-### Setting Up Your Environment
-
-1. **Create a Virtual Environment (Recommended)**
-
-    Open the project folder in Visual Studio Code. (You may need to open it, close it, and open it again.)
-    <br><br>Open a new terminal and create a virtual environment:
-
-    ```bash
-    pipenv install
-    pipenv shell
-    ```
-    Do Cmd+Shift+P and click 'Python: Select Interpreter'. Select the interpreter for your project.
-
-### Database Setup
-
-1. **Configure Database URIs**
-
-    Update the .env file in your project root with the correct URIs for your development and test databases if necessary. (You shouldn't need to do this.)
-
-2. **Initialize and Migrate Database**
-
-    Run the following commands to set up your database:
-    (If you need a reminder of your database name, you'll find it in the .env file.)
-
-    ```bash
-    flask db init
-    createdb THE_EXACT_DATABASE_NAME_YOU_CHOSE_EARLIER
-    createdb THE_EXACT_DATABASE_NAME_YOU_CHOSE_EARLIER_test
-    createdb THE_EXACT_DATABASE_NAME_YOU_CHOSE_EARLIER_prod
-    flask db migrate -m "Initial migration"
-    flask db upgrade
-
-### Running the Application
-
-1. **Start the Flask Server**
-
-    To run the Flask application:
-
-    ```bash
-    python run.py
-
-### Running Tests
-
-1. **Running Pytest**
-
-    To run the tests, simply use the pytest command in the project root:
-
-    ```bash
-    pytest
+- Initial pytests and playwright tests
