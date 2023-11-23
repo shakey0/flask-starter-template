@@ -12,10 +12,12 @@ This README provides instructions on how to use the `flask-template.py` script t
 
 ### Using the Flask Template Script
 
+<br>
 1. **Download the Script**
 
     Download the `flask-template.py` script to your local machine.
 
+<br>
 2. **Run the Script**
 
     Open your command line tool and navigate to the directory where you want your new Flask project to be created.
@@ -30,6 +32,7 @@ This README provides instructions on how to use the `flask-template.py` script t
     <br><br>Once your tests have completed you'll see the message 'Your project is ready!'
     <br><br>If you've set up VS Code correctly, you'll be able to jump into your project by doing:
 
+<br>
 3. **Run in VS Code**
 
     ```bash
@@ -38,17 +41,17 @@ This README provides instructions on how to use the `flask-template.py` script t
     ```
     (You may need to open VS Code, close it, and open it again.)
 
-    <br><br>Once in your project in VS Code, open a terminal, and if the pipenv shell isn't already activated, do:
+    <br>Once in your project in VS Code, open a terminal, and if the pipenv shell isn't already activated, do:
     ```bash
     pipenv shell
     ```
 
-    <br><br>Now you can run the tests by doing:
+    <br>Now you can run the tests by doing:
     ```bash
     pytest
     ```
 
-    <br><br>You can start the server by doing:
+    <br>You can start the server by doing:
     ```bash
     python run.py
     ```
