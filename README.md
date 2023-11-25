@@ -10,7 +10,7 @@ This README provides instructions on how to use the `flask-template.py` script t
 
 - Python 3.x installed on your system.
 - Knowledge of command line operations.
-- PostgreSQL database server (or modify the script for your database system).
+- (If you select the PostgreSQL database option (currently only available on MacOS), you'll need PostgreSQL installed and running on your machine.)
 
 ### Using the Flask Template Script
 

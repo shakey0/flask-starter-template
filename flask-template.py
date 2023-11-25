@@ -1,5 +1,6 @@
 import os
 import subprocess
+import platform
 
 def is_valid_name(name, illegal_chars, uppercase=True):
     for char in name:
@@ -19,9 +20,58 @@ def get_valid_name(prompt, illegal_chars, uppercase=True):
         if is_valid_name(name, illegal_chars, uppercase):
             return name
 
-project_name = get_valid_name("Enter your project name: ", illegal_chars)
-app_name = get_valid_name("Enter the name of your Flask app: ", illegal_chars)
-database_name = get_valid_name("Enter the name of your database: ", illegal_chars, uppercase=False)
+project_name = get_valid_name("\nEnter your project name: ", illegal_chars)
+app_name = get_valid_name("\nEnter the name of your Flask app: ", illegal_chars)
+database_name = get_valid_name("\nEnter the name of your database: ", illegal_chars, uppercase=False)
+
+os_names = ["Windows", "Linux", "Darwin"]
+os_name = platform.system()
+
+if os_name not in os_names:
+    print("\nUnable to detect OS.")
+    while True:
+        os_option = input("\nChoose your OS:\n1. Windows\n2. Linux\n3. MacOS\n\nEnter your choice: ")
+        if os_option == "1":
+            os_name = "Windows"
+            break
+        elif os_option == "2":
+            os_name = "Linux"
+            break
+        elif os_option == "3":
+            os_name = "Darwin"
+            break
+        else:
+            print("\nInvalid choice.")
+
+if os_name == "Windows":
+    print("\nWindows OS detected.")
+    input('\nSQLite will be used for the database. Press Enter to continue... ')
+    database_uri = f"sqlite:///{database_name}.db"
+
+elif os_name == "Linux":
+    print("\nLinux OS detected.")
+    input('\nSQLite will be used for the database. Press Enter to continue... ')
+    database_uri = f"sqlite:///{database_name}.db"
+
+elif os_name == "Darwin":
+    print("\nMacOS detected.")
+    print('\nYou can choose between SQLite and PostgreSQL for the database.')
+    while True:
+        choice = input('\nPress P + Enter to use PostgreSQL or simply press Enter to use SQLite... ')
+        if choice == "":
+            f_choice = input('\nYou have chosen SQLite. Press Enter to confirm or B + Enter to go back... ')
+            if f_choice.lower() != "b":
+                database_uri = f"sqlite:///{database_name}.db"
+                break
+        elif choice.lower() == "p":
+            print('\nYou have chosen PostgreSQL. Make sure you have it installed and running on your system.')
+            f_choice = input('\nPress Enter to confirm or B + Enter to go back... ')
+            if f_choice.lower() != "b":
+                database_uri = f"postgresql://localhost/{database_name}"
+                break
+
+else:
+    database_uri = f"sqlite:///{database_name}.db"
 
 base_path = os.path.join(os.getcwd(), project_name)
 
@@ -42,18 +92,16 @@ create_directory(base_path)
 
 # Directories to create
 directories = [
-    f"{app_name}/static/css",
-    f"{app_name}/static/images",
-    f"{app_name}/templates",
-    f"{app_name}/models",
-    f"{app_name}/views",
-    f"{app_name}/forms",
+    os.path.join(app_name, "static", "css"),
+    os.path.join(app_name, "static", "images"),
+    os.path.join(app_name, "templates"),
+    os.path.join(app_name, "models"),
+    os.path.join(app_name, "views"),
+    os.path.join(app_name, "forms"),
     "migrations",
     "tests",
     "venv"
 ]
-
-database_uri = f"postgresql://localhost/{database_name}"
 
 app_init_content = f'''from flask import Flask
 from {app_name}.extensions import db, migrate
@@ -246,9 +294,14 @@ def index():
     db.session.add(new_user)
     db.session.commit()
 
-    last_user = User.query.order_by(User.id.desc()).first()
+    users = User.query.order_by(User.id.desc()).all()
 
-    return '<h1>Hello world!</h1><br>Last added user: {} with email {}'.format(last_user.username, last_user.email)
+    hello_message = '<h1>Hello world!</h1>'
+
+    for user in users:
+        hello_message += '<p>User {}: {}<br>Email: {}</p>'.format(user.id, user.username, user.email)
+
+    return hello_message
 '''
 
 user_model_content = f'''from {app_name} import db
@@ -270,8 +323,8 @@ files = {
     os.path.join(base_path, f"{app_name}", "__init__.py"): f"{app_init_content}",
     os.path.join(base_path, f"{app_name}", "config.py"): f"{config_content}",
     os.path.join(base_path, f"{app_name}", "utils.py"): "# Utility functions\n",
-    os.path.join(base_path, f"{app_name}/static", "script.js"): "// JavaScript file",
-    os.path.join(base_path, f"{app_name}/extensions.py"): "from flask_sqlalchemy import SQLAlchemy\nfrom flask_migrate import Migrate\n\n# Initialize extensions\n\ndb = SQLAlchemy()\nmigrate = Migrate()\n",
+    os.path.join(base_path, f"{app_name}", "static", "script.js"): "// JavaScript file",
+    os.path.join(base_path, f"{app_name}", "extensions.py"): "from flask_sqlalchemy import SQLAlchemy\nfrom flask_migrate import Migrate\n\n# Initialize extensions\n\ndb = SQLAlchemy()\nmigrate = Migrate()\n",
     os.path.join(base_path, "run.py"): f"from dotenv import load_dotenv\nload_dotenv()\n\nfrom {app_name} import create_app\n\napp = create_app()\n\nif __name__ == '__main__':\n    app.run(debug=True)\n",
     os.path.join(base_path, "tests", "__init__.py"): "# Initialize tests module",
     os.path.join(base_path, "tests", "conftest.py"): f"{conftest_content}",
@@ -284,28 +337,28 @@ files = {
     os.path.join(base_path, ".gitignore"): "venv/\n*.pyc\n.env\n",
 
     # Templates
-    os.path.join(base_path, f"{app_name}/templates", "layout.html"): "<!DOCTYPE html>\n<html>\n<head>\n    <!-- Head contents -->\n</head>\n<body>\n    {% block content %}{% endblock %}\n</body>\n</html>",
-    os.path.join(base_path, f"{app_name}/templates", "index.html"): "{% extends 'layout.html' %}\n{% block content %}\n<h1>Homepage</h1>\n{% endblock %}",
-    os.path.join(base_path, f"{app_name}/templates", "login.html"): "<!-- Login page template -->",
-    os.path.join(base_path, f"{app_name}/templates", "register.html"): "<!-- Registration page template -->",
+    os.path.join(base_path, f"{app_name}", "templates", "layout.html"): "<!DOCTYPE html>\n<html>\n<head>\n    <!-- Head contents -->\n</head>\n<body>\n    {% block content %}{% endblock %}\n</body>\n</html>",
+    os.path.join(base_path, f"{app_name}", "templates", "index.html"): "{% extends 'layout.html' %}\n{% block content %}\n<h1>Homepage</h1>\n{% endblock %}",
+    os.path.join(base_path, f"{app_name}", "templates", "login.html"): "<!-- Login page template -->",
+    os.path.join(base_path, f"{app_name}", "templates", "register.html"): "<!-- Registration page template -->",
 
     # Models
-    os.path.join(base_path, f"{app_name}/models", "__init__.py"): "# Initialize models module",
-    os.path.join(base_path, f"{app_name}/models", "test_table.py"): f"{test_table_content}",
-    os.path.join(base_path, f"{app_name}/models", "user.py"): f"{user_model_content}",
-    os.path.join(base_path, f"{app_name}/models", "post.py"): f"from {app_name} import db\n\nclass Post(db.Model):\n    pass",
+    os.path.join(base_path, f"{app_name}", "models", "__init__.py"): "# Initialize models module",
+    os.path.join(base_path, f"{app_name}", "models", "test_table.py"): f"{test_table_content}",
+    os.path.join(base_path, f"{app_name}", "models", "user.py"): f"{user_model_content}",
+    os.path.join(base_path, f"{app_name}", "models", "post.py"): f"from {app_name} import db\n\nclass Post(db.Model):\n    pass",
 
     # Views
-    os.path.join(base_path, f"{app_name}/views", "__init__.py"): "# Initialize views module",
-    os.path.join(base_path, f"{app_name}/views", "main.py"): f"{main_content}",
-    os.path.join(base_path, f"{app_name}/views", "auth.py"): "# Authentication views",
-    os.path.join(base_path, f"{app_name}/views", "api.py"): "# API views",
+    os.path.join(base_path, f"{app_name}", "views", "__init__.py"): "# Initialize views module",
+    os.path.join(base_path, f"{app_name}", "views", "main.py"): f"{main_content}",
+    os.path.join(base_path, f"{app_name}", "views", "auth.py"): "# Authentication views",
+    os.path.join(base_path, f"{app_name}", "views", "api.py"): "# API views",
 
     # Forms
-    os.path.join(base_path, f"{app_name}/forms", "__init__.py"): "# Initialize forms module",
-    os.path.join(base_path, f"{app_name}/forms", "login_form.py"): "from flask_wtf import FlaskForm\n\n# Login form",
-    os.path.join(base_path, f"{app_name}/forms", "register_form.py"): "from flask_wtf import FlaskForm\n\n# Registration form",
-    os.path.join(base_path, f"{app_name}/forms", "post_form.py"): "from flask_wtf import FlaskForm\n\n# Post form",
+    os.path.join(base_path, f"{app_name}", "forms", "__init__.py"): "# Initialize forms module",
+    os.path.join(base_path, f"{app_name}", "forms", "login_form.py"): "from flask_wtf import FlaskForm\n\n# Login form",
+    os.path.join(base_path, f"{app_name}", "forms", "register_form.py"): "from flask_wtf import FlaskForm\n\n# Registration form",
+    os.path.join(base_path, f"{app_name}", "forms", "post_form.py"): "from flask_wtf import FlaskForm\n\n# Post form",
 }
 
 for directory in directories:
@@ -326,14 +379,19 @@ def run_shell_command(command):
         print(f"Successfully executed: {command}")
     except subprocess.CalledProcessError as e:
         print(f"Error in executing command: {command}\n{e}")
+        exit()
     
 change_directory(base_path)
 
 run_shell_command("pipenv install")
 run_shell_command("pipenv run flask db init")
-run_shell_command(f"createdb {database_name}")
-run_shell_command(f"createdb {database_name}_test")
-run_shell_command(f"createdb {database_name}_prod")
+if "sqlite" in database_uri:
+    for db_name in [f"{database_name}.db", f"{database_name}_test.db", f"{database_name}_prod.db"]:
+        open(db_name, 'a').close()
+else:
+    run_shell_command(f"createdb {database_name}")
+    run_shell_command(f"createdb {database_name}_test")
+    run_shell_command(f"createdb {database_name}_prod")
 run_shell_command("pipenv run flask db migrate")
 run_shell_command("pipenv run flask db upgrade")
 run_shell_command("pipenv run playwright install")
