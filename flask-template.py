@@ -392,12 +392,27 @@ except:
         if os_name == "Windows":
             pass
         elif os_name == "Linux":
-            run_shell_command("sudo apt install pipenv")
-            run_shell_command("pip install --user --upgrade pip")
-            run_shell_command("pipenv install")
+            try:
+                run_shell_command("sudo apt install pipenv")
+                run_shell_command("pip install --user --upgrade pip")
+                run_shell_command("pipenv install")
+            except:
+                print("\nUnable to install pipenv. Exiting...")
+                print("\nYou can also try installing pipenv manually using the following commands and then run this file again: ")
+                print("sudo apt install pipenv")
+                print("pip install --user --upgrade pip")
+                print("\nIf you will run this file again, to create the same project, you will need to delete the files and directories created by this script.")
+                exit()
         elif os_name == "Darwin":
-            run_shell_command("brew install pipenv")
-            run_shell_command("pipenv install")
+            try:
+                run_shell_command("brew install pipenv")
+                run_shell_command("pipenv install")
+            except:
+                print("\nUnable to install pipenv. Exiting...")
+                print("\nYou can also try installing pipenv manually using the following commands and then run this file again: ")
+                print("brew install pipenv")
+                print("\nIf you will run this file again, to create the same project, you will need to delete the files and directories created by this script.")
+                exit()
     else:
         print("\nUnable to install pipenv. Exiting...")
         print("\nThe files and directories created can be used with any other virtual environment manager.")
