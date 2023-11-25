@@ -390,7 +390,15 @@ except:
     choice = input("Press Y + Enter to install globally or simply press Enter to exit... ")
     if choice.lower() == "y":
         if os_name == "Windows":
-            pass
+            try:
+                run_shell_command("pip install pipenv")
+                run_shell_command("pipenv install")
+            except:
+                print("\nUnable to install pipenv. Exiting...")
+                print("\nYou can also try installing pipenv manually using the following commands and then run this file again: ")
+                print("pip install pipenv")
+                print("\nIf you will run this file again, to create the same project, you will need to delete the files and directories created by this script.")
+                exit()
         elif os_name == "Linux":
             try:
                 run_shell_command("sudo apt install pipenv")
