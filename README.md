@@ -29,7 +29,7 @@ This README provides instructions on how to use the `flask-template.py` script t
     ```bash
     python path/to/flask-template.py
     ```
-    (If for example you git cloned this repo into Documents, the path to run the file from any other directory would be: " python ~/Documents/FlaskProjectTemplate/flask-template.py ")
+    (If for example you git cloned this repo into Documents, the path to run the file from any other directory would be: " python ~/Documents/flask-starter-template/flask-template.py ")
     <br><br>Upon running the file, enter the names of your project, app and database.
     <br><br>Once the tests have completed you'll see the message 'Your project is ready!'
     <br><br>If you've set up VS Code correctly, you'll be able to jump into your project by doing:
