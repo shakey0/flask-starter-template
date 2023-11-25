@@ -383,7 +383,27 @@ def run_shell_command(command):
     
 change_directory(base_path)
 
-run_shell_command("pipenv install")
+try:
+    run_shell_command("pipenv install")
+except:
+    print("\nUnable to install pipenv for the project. Would you like to install it globally?")
+    choice = input("Press Y + Enter to install globally or simply press Enter to exit... ")
+    if choice.lower() == "y":
+        if os_name == "Windows":
+            pass
+        elif os_name == "Linux":
+            run_shell_command("sudo apt install pipenv")
+            run_shell_command("pip install --user --upgrade pip")
+            run_shell_command("pipenv install")
+        elif os_name == "Darwin":
+            run_shell_command("brew install pipenv")
+            run_shell_command("pipenv install")
+    else:
+        print("\nUnable to install pipenv. Exiting...")
+        print("\nThe files and directories created can be used with any other virtual environment manager.")
+        print("You can also use the requirements.txt file to install the dependencies manually.")
+        print("You will also need to create your databases manually.")
+        exit()
 run_shell_command("pipenv run flask db init")
 if "sqlite" in database_uri:
     for db_name in [f"{database_name}.db", f"{database_name}_test.db", f"{database_name}_prod.db"]:
