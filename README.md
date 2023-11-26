@@ -20,7 +20,7 @@ This README provides instructions on how to use the `flask-template.py` script t
 
 2. **Run the Script**
 
-    NOTE: If you are on Windows and haven't yet connected to " 127.0.0.1 ", you may need open Command Prompt as an administrator, run the command " netsh winsock reset " and then restart your computer.
+    <i>NOTE: If you are on Windows and haven't yet connected to " 127.0.0.1 ", you may need open Command Prompt as an administrator, run the command " netsh winsock reset " and then restart your computer.</i>
 
     Open your command line tool and navigate to the directory where you want your new Flask project to be created.
 
