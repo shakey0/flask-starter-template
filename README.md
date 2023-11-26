@@ -74,12 +74,11 @@ The script will create a new directory with your project name and set up a basic
 
 ### Installing Pipenv
 
-    ```bash
-    # For MacOS:
-    brew install pipenv
-    # For Linux:
-    sudo apt install pipenv
-    pip install --user --upgrade pip
-    # For Windows:
-    pip install pipenv
-    ```
+```bash
+# For MacOS:
+brew install pipenv
+# For Linux:
+sudo apt install pipenv
+pip install --user --upgrade pip
+# For Windows:
+pip install pipenv
