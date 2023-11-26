@@ -383,50 +383,7 @@ def run_shell_command(command):
     
 change_directory(base_path)
 
-try:
-    run_shell_command("pipenv install")
-except:
-    print("\nUnable to install pipenv for the project. Would you like to install it globally?")
-    choice = input("Press Y + Enter to install globally or simply press Enter to exit... ")
-    if choice.lower() == "y":
-        if os_name == "Windows":
-            try:
-                run_shell_command("pip install pipenv")
-                run_shell_command("pipenv install")
-            except:
-                print("\nUnable to install pipenv. Exiting...")
-                print("\nYou can also try installing pipenv manually using the following commands and then run this file again: ")
-                print("pip install pipenv")
-                print("\nIf you will run this file again, to create the same project, you will need to delete the files and directories created by this script.")
-                exit()
-        elif os_name == "Linux":
-            try:
-                run_shell_command("sudo apt install pipenv")
-                run_shell_command("pip install --user --upgrade pip")
-                run_shell_command("pipenv install")
-            except:
-                print("\nUnable to install pipenv. Exiting...")
-                print("\nYou can also try installing pipenv manually using the following commands and then run this file again: ")
-                print("sudo apt install pipenv")
-                print("pip install --user --upgrade pip")
-                print("\nIf you will run this file again, to create the same project, you will need to delete the files and directories created by this script.")
-                exit()
-        elif os_name == "Darwin":
-            try:
-                run_shell_command("brew install pipenv")
-                run_shell_command("pipenv install")
-            except:
-                print("\nUnable to install pipenv. Exiting...")
-                print("\nYou can also try installing pipenv manually using the following commands and then run this file again: ")
-                print("brew install pipenv")
-                print("\nIf you will run this file again, to create the same project, you will need to delete the files and directories created by this script.")
-                exit()
-    else:
-        print("\nUnable to install pipenv. Exiting...")
-        print("\nThe files and directories created can be used with any other virtual environment manager.")
-        print("You can also use the requirements.txt file to install the dependencies manually.")
-        print("You will also need to create your databases manually.")
-        exit()
+run_shell_command("pipenv install")
 run_shell_command("pipenv run flask db init")
 if "sqlite" in database_uri:
     for db_name in [f"{database_name}.db", f"{database_name}_test.db", f"{database_name}_prod.db"]:
