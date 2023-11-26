@@ -8,7 +8,7 @@ This README provides instructions on how to use the `flask-template.py` script t
 ### Prerequisites
 
 - Python 3.x installed on your system.
-- Pipenv installed globally on your system. ([Click here for instructions](#line75))
+- Pipenv installed globally on your system. ([Click here for instructions](#installing-pipenv))
 - Knowledge of command line operations.
 - (If you select the PostgreSQL database option (currently only available on MacOS), you'll need PostgreSQL installed and running on your machine.)
 
