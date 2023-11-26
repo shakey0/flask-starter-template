@@ -1,7 +1,13 @@
 # Flask Project Template
 
 This README provides instructions on how to use the `flask-template.py` script to create a new Flask project with a predefined directory structure and necessary files. This is a little project I undertook to save the hassle of having to individually create all the files, folders, testing config, etc. when starting a new project.
-<br><br><i>NOTE: I am often updating this template, so please check for updates and download the latest version before using it.</i>
+
+**This script will create:**
+- All the files and folders necessary to begin a standard Flask project
+- The databases (either SQLite or PostgreSQL depending on your choice)
+- The basic configurations for your project including code to create the app, make connections to the databases, and set up the testing environment
+
+<br><i>NOTE: I am often updating this template, so please check for updates and download the latest version before using it. (Please note that the PostgreSQL option is currently only available for MacOS)</i>
 
 ## Quick Start
 
