@@ -38,7 +38,7 @@ This README provides instructions on how to use the `flask-template.py` script t
     # For Windows:
     python "C:\Users\<YOUR_USER_NAME>\Documents\flask-starter-template\flask-template.py"
     ```
-    <br><br>Upon running the file, enter the names of your project, app and database.
+    <br>Upon running the file, enter the names of your project, app and database.
     <br><br>Once the tests have completed you'll see the message 'Your project is ready!'
     <br><br>If you've set up VS Code correctly, you'll be able to jump into your project by doing:
 
