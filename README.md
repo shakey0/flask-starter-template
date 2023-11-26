@@ -8,19 +8,19 @@ This README provides instructions on how to use the `flask-template.py` script t
 ### Prerequisites
 
 - Python 3.x installed on your system.
-- Pipenv installed globally on your system.
+- Pipenv installed globally on your system. ([Click here for instructions](#line76))
 - Knowledge of command line operations.
 - (If you select the PostgreSQL database option (currently only available on MacOS), you'll need PostgreSQL installed and running on your machine.)
 
 ### Using the Flask Template Script
 
-
 1. **Download the Script**
 
     Download the `flask-template.py` script to your local machine.
 
-
 2. **Run the Script**
+
+    NOTE: If you are on Windows and haven't yet connected to " 127.0.0.1 ", you may need open Command Prompt as an administrator, run the command " netsh winsock reset " and then restart your computer.
 
     Open your command line tool and navigate to the directory where you want your new Flask project to be created.
 
@@ -72,3 +72,15 @@ The script will create a new directory with your project name and set up a basic
 - Configuration files
 - A basic Flask application setup
 - Initial pytests and playwright tests
+
+### Installing Pipenv
+
+    ```bash
+    # For MacOS:
+    brew install pipenv
+    # For Linux:
+    sudo apt install pipenv
+    pip install --user --upgrade pip
+    # For Windows:
+    pip install pipenv
+    ```
