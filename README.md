@@ -2,7 +2,6 @@
 
 This README provides instructions on how to use the `flask-template.py` script to create a new Flask project with a predefined directory structure and necessary files. This is a little project I undertook to save the hassle of having to individually create all the files, folders, testing config, etc. when starting a new project.
 <br><br>NOTE: I am often updating this template, so please check for updates and download the latest version before using it.
-<br><br>NOTE: It currently only runs smoothly on Mac OS. However, I am working on having an OS selection option and updating it to run on Windows and Ubuntu too.
 
 ## Quick Start
 
