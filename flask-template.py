@@ -163,10 +163,9 @@ SQLALCHEMY_TEST_DATABASE_URI={database_uri}_test
 SQLALCHEMY_DATABASE_URI_PROD={database_uri}_prod
 '''
 
-conftest_content = f'''import pytest, sys, py, os
-from flask import Flask
+conftest_content = f'''import pytest, sys, random, py, os
+from {app_name}.__init__ import create_app
 from {app_name} import db
-from {app_name}.config import TestingConfig
 from {app_name}.models.test_table import RunTable
 from tests.seed_data import init_user
 from playwright.sync_api import sync_playwright
@@ -174,19 +173,13 @@ from xprocess import ProcessStarter
 
 @pytest.fixture(scope='function')
 def test_app():
-    app = Flask(__name__)
-    app.config.from_object(TestingConfig)
-    db.init_app(app)
+    os.environ['FLASK_ENV'] = 'testing'
+    app = create_app()
     with app.app_context():
         db.create_all()
         yield app
         db.session.remove()
         db.drop_all()
-
-@pytest.fixture(scope='function')
-def test_client(test_app):
-    with test_app.test_client() as client:
-        yield client
 
 @pytest.fixture(scope='function')
 def seed_test_database_for_test(test_app):
@@ -202,30 +195,39 @@ def seed_test_database(test_app):
 @pytest.fixture
 def page():
     with sync_playwright() as p:
-        browser = p.chromium.launch()
+        browser = p.chromium.launch(headless=True)
         page = browser.new_page()
-        yield page
-        browser.close()
+        try:
+            yield page
+        finally:
+            browser.close()
 ''' + '''
 @pytest.fixture(scope='session')
 def flask_server(xprocess):
     python_executable = sys.executable
     app_file = py.path.local(__file__).dirpath("../run.py").realpath()
+    port = str(random.randint(4000, 4999))
     class Starter(ProcessStarter):
-        pattern = "Running on http://127.0.0.1:5000"
-        env = {"PORT": str(5000), "FLASK_ENV": "testing", **os.environ}
+        env = {"PORT": port, "FLASK_ENV": "testing", **os.environ}
+        pattern = "Debugger PIN"
         args = [python_executable, app_file]
 
     xprocess.ensure('flask_app', Starter)
 
-    yield f"http://localhost:5000/"
+    yield f"localhost:{port}"
 
     xprocess.getinfo('flask_app').terminate()
+
+@pytest.fixture()
+def web_client(test_app):
+    test_app.config['TESTING'] = True # This gets us better errors
+    with test_app.test_client() as client:
+        yield client
 '''
 
 test_database_content = f'''from {app_name}.models.test_table import RunTable, db
 
-def test_database_connection(test_app, test_client, seed_test_database_for_test):
+def test_database_connection(test_app, seed_test_database_for_test):
     db.session.add(RunTable(name='second_record'))
     db.session.commit()
 
@@ -258,7 +260,7 @@ def init_user(db):
 
 test_user_content = f'''from {app_name}.models.user import User
 
-def test_user_creation(test_app, test_client, seed_test_database):
+def test_user_creation(test_app, seed_test_database):
     user = User.query.filter_by(username='john_doe').first()
     assert user is not None
     assert user.username == 'john_doe'
@@ -267,7 +269,7 @@ def test_user_creation(test_app, test_client, seed_test_database):
 
 test_homepage_content = f'''from playwright.sync_api import expect
 
-def test_homepage_navbar(page, test_app, test_client, seed_test_database, flask_server):
+def test_homepage_navbar(page, test_app, seed_test_database, flask_server):
     test_url = "http://localhost:5000/"
     page.goto(test_url)
     logo = page.locator('h1')
